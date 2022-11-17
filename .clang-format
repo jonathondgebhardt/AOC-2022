@@ -13,4 +13,5 @@ AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 IndentWidth: 4
+IndentAccessModifiers: false
 ...
