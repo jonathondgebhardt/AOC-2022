@@ -1,4 +1,3 @@
-# AOC-2022
-Advent of Code 2022
+# Advent of Code
 
-Hopefully I make it further than 2021!
+This template is inspired by https://github.com/fspoettel/advent-of-code-rust. More details about using this template will be added.
