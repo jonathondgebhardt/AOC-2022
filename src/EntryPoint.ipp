@@ -19,7 +19,6 @@ int main(int argc, char** argv)
     auto useSample = false;
     auto solvePartOne = true;
     auto solvePartTwo = true;
-    auto timeSolutions = false;
 
     for(int i = 1; i < argc; ++i)
     {
@@ -34,10 +33,6 @@ int main(int argc, char** argv)
         else if(strcmp(argv[i], "--part2") == 0)
         {
             solvePartOne = false;
-        }
-        else if(strcmp(argv[i], "--time") == 0)
-        {
-            timeSolutions = true;
         }
         else if(strcmp(argv[i], "--help") == 0)
         {
@@ -67,13 +62,8 @@ int main(int argc, char** argv)
 
         std::cout << "part 1: " << answer;
 
-        if(timeSolutions)
-        {
-            const auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-            std::cout << " (" << delta.count() << " ms)";
-        }
-
-        std::cout << "\n";
+        const auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        std::cout << " (" << delta.count() << " ms)\n";
     }
 
     if(solvePartTwo)
@@ -84,13 +74,8 @@ int main(int argc, char** argv)
 
         std::cout << "part 2: " << answer;
 
-        if(timeSolutions)
-        {
-            const auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-            std::cout << " (" << delta.count() << " ms)";
-        }
-
-        std::cout << "\n";
+        const auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        std::cout << " (" << delta.count() << " ms)\n";
     }
 
     return EXIT_SUCCESS;
