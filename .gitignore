@@ -30,3 +30,5 @@ build
 cmake-build*
 
 .idea
+
+inputs/
