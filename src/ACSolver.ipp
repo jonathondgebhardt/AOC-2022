@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Export.hpp"
 #include <iostream>
-#include <memory>
 #include <optional>
 #include <string>
 #include <vector>
@@ -11,7 +9,7 @@
 /// \struct ACSolver
 /// \brief Provides a consistent interface for solving AoC challenges.
 ///
-struct UTILITIES_EXPORT ACSolver
+struct ACSolver
 {
     using Answer = std::optional<int64_t>;
 
@@ -43,10 +41,3 @@ struct UTILITIES_EXPORT ACSolver
     // TODO: Make a type to describe input?
     std::vector<std::string> input;
 };
-
-///
-/// \brief Hook for entry-point.
-/// \param useSample Whether the sample input file should be used.
-/// \return The solver.
-///
-// std::unique_ptr<ACSolver> CreateSolver(bool useSample);

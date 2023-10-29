@@ -100,6 +100,33 @@ bool createSourceFiles(const std::filesystem::path& x)
     ofs << "        return solver;\n";
     ofs << "    }\n";
     ofs << "}\n";
+    ofs << "\n";
+    ofs << "TEST(" << dayNumber << ", part_one)\n";
+    ofs << "{\n";
+    ofs << "    const auto answer = CreateSolver(false).solvePartOne();\n";
+    ofs << "    ASSERT_NE(answer, std::nullopt);\n";
+    ofs << "    std::cout << \"part one: \" << *answer << std::endl;\n";
+    ofs << "}\n";
+    ofs << "\n";
+    ofs << "TEST(" << dayNumber << ", part_two)\n";
+    ofs << "{\n";
+    ofs << "    const auto answer = CreateSolver(false).solvePartTwo();\n";
+    ofs << "    ASSERT_NE(answer, std::nullopt);\n";
+    ofs << "    std::cout << \"part two: \" << *answer << std::endl;\n";
+    ofs << "}\n";
+    ofs << "TEST(" << dayNumber << ", part_one_sample)\n";
+    ofs << "{\n";
+    ofs << "    const auto answer = CreateSolver(true).solvePartOne();\n";
+    ofs << "    ASSERT_NE(answer, std::nullopt);\n";
+    ofs << "    std::cout << \"part one sample: \" << *answer << std::endl;\n";
+    ofs << "}\n";
+    ofs << "\n";
+    ofs << "TEST(" << dayNumber << ", part_two_sample)\n";
+    ofs << "{\n";
+    ofs << "    const auto answer = CreateSolver(true).solvePartTwo();\n";
+    ofs << "    ASSERT_NE(answer, std::nullopt);\n";
+    ofs << "    std::cout << \"part two sample: \" << *answer << std::endl;\n";
+    ofs << "}\n";
 
     return true;
 }

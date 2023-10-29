@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
+# TODO: Don't hardcode year
 project(AOC_2022 CXX)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -24,7 +25,6 @@ include_directories(${CMAKE_BINARY_DIR}/generated/)
 
 set(AOC_SOURCE_H
     src/ACSolver.ipp
-    src/Export.hpp
     src/Utilities.ipp
     ${CMAKE_BINARY_DIR}/generated/InputDirectoryConfig.ipp
 )
@@ -33,7 +33,7 @@ set(AOC_SOURCE
     src/Utilities.cpp
 )
 
-add_library(AOC SHARED
+add_library(AOC STATIC
     ${AOC_SOURCE_H}
     ${AOC_SOURCE}
 )
