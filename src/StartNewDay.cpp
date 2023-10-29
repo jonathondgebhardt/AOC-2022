@@ -1,5 +1,6 @@
 #include <InputDirectoryConfig.ipp>
 
+#include "HttpsRequest.h"
 #include "Utilities.ipp"
 #include <curl/curl.h>
 #include <filesystem>
@@ -157,58 +158,24 @@ bool downloadInput(const std::string& dayNumber)
 {
     auto success = true;
 
-    // TODO: Abstract this into a class
-    // https://curl.se/libcurl/c/https.html
-    curl_global_init(CURL_GLOBAL_DEFAULT);
+    HttpsRequest request;
+    request.setUrl("https://adventofcode.com/2022/day/" + dayNumber + "/input");
 
-    // TODO: Could probably make sure we don't already have that file...
-    if(auto curl = curl_easy_init())
+    // TODO: Compiler complains about usage of std::tmpnam. Use std::tmpfile instead.
+    std::string temporaryFile = std::tmpnam(nullptr);
+    if(auto file = fopen(temporaryFile.c_str(), "w"))
     {
-        // TODO: Don't hard-code year and day
-        const auto url = "https://adventofcode.com/2022/day/" + dayNumber + "/input";
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        request.setFile(temporaryFile.c_str());
+        request.setContentType("text/plain");
+        success = request();
 
-        // Disable progress bar
-        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+        fclose(file);
 
-        // Don't do any custom data parsing
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, nullptr);
+        const std::filesystem::path dayInput = inputPath + "/" + dayNumber + ".txt";
 
-        // TODO: Compiler complains about usage of std::tmpnam. Use std::tmpfile instead.
-        std::string temporaryFile = std::tmpnam(nullptr);
-        if(auto file = fopen(temporaryFile.c_str(), "w"))
-        {
-            curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
-
-            const auto inputPath = config::GetInputFilePath();
-            // TODO: Read this from the filesystem, don't hard-code
-            const auto sessionFile = inputPath + "/.adventofcode.session";
-            const auto session = util::Parse(sessionFile).front();
-            //            const auto cookie = "session=" + session;
-            //            curl_easy_setopt(curl, CURLOPT_COOKIE, cookie.c_str());
-
-            curl_slist* list = nullptr;
-            list = curl_slist_append(list, "Content-Type: text/plain");
-            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);
-
-            if(auto res = curl_easy_perform(curl); res != CURLE_OK)
-            {
-                std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << "\n";
-                success = false;
-            }
-
-            fclose(file);
-
-            const std::filesystem::path dayInput = inputPath + "/" + dayNumber + ".txt";
-
-            // TODO: This may throw an exception
-            success = std::filesystem::copy_file(temporaryFile, dayInput);
-        }
-
-        curl_easy_cleanup(curl);
+        // TODO: This may throw an exception
+        success = std::filesystem::copy_file(temporaryFile, dayInput);
     }
-
-    curl_global_cleanup();
 
     return success;
 }

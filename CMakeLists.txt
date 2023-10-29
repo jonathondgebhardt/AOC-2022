@@ -48,7 +48,7 @@ set(BUILD_STARTNEWDAY ON CACHE BOOL "Enable building StartNewDay")
 if(BUILD_STARTNEWDAY)
     # TODO: Use vcpkg now that we have two dependencies?
     find_package(CURL REQUIRED)
-    add_executable(StartNewDay src/StartNewDay.cpp)
+    add_executable(StartNewDay src/StartNewDay.cpp src/HttpsRequest.cpp src/HttpsRequest.h)
     target_include_directories(StartNewDay PRIVATE ${CURL_INCLUDE_DIRS})
     target_link_libraries(StartNewDay ${CURL_LIBRARIES} AOC)
 endif()
