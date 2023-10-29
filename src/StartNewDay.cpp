@@ -1,5 +1,7 @@
 #include <InputDirectoryConfig.ipp>
 
+#include "Utilities.ipp"
+#include <curl/curl.h>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -7,8 +9,9 @@
 
 void showUsage(const std::string& x)
 {
-    std::cout << "Usage: " << x << " NEW_DAY_SUBDIRECTORY_NAME [-f]\n";
-    std::cout << "       NEW_DAY_SUBDIRECTORY_NAME Name of new day\n";
+    // TODO: Add more detail
+    std::cout << "Usage: " << x << " DAY_NUMBER [-f]\n";
+    std::cout << "       DAY_NUMBER Which day to start\n";
     std::cout << "       -f Force overwrite\n";
 }
 
@@ -101,27 +104,27 @@ bool createSourceFiles(const std::filesystem::path& x)
     ofs << "    }\n";
     ofs << "}\n";
     ofs << "\n";
-    ofs << "TEST(" << dayNumber << ", part_one)\n";
+    ofs << "TEST(day_" << dayNumber << ", part_one)\n";
     ofs << "{\n";
     ofs << "    const auto answer = CreateSolver(false).solvePartOne();\n";
     ofs << "    ASSERT_NE(answer, std::nullopt);\n";
     ofs << "    std::cout << \"part one: \" << *answer << std::endl;\n";
     ofs << "}\n";
     ofs << "\n";
-    ofs << "TEST(" << dayNumber << ", part_two)\n";
+    ofs << "TEST(day_" << dayNumber << ", part_two)\n";
     ofs << "{\n";
     ofs << "    const auto answer = CreateSolver(false).solvePartTwo();\n";
     ofs << "    ASSERT_NE(answer, std::nullopt);\n";
     ofs << "    std::cout << \"part two: \" << *answer << std::endl;\n";
     ofs << "}\n";
-    ofs << "TEST(" << dayNumber << ", part_one_sample)\n";
+    ofs << "TEST(day_" << dayNumber << ", part_one_sample)\n";
     ofs << "{\n";
     ofs << "    const auto answer = CreateSolver(true).solvePartOne();\n";
     ofs << "    ASSERT_NE(answer, std::nullopt);\n";
     ofs << "    std::cout << \"part one sample: \" << *answer << std::endl;\n";
     ofs << "}\n";
     ofs << "\n";
-    ofs << "TEST(" << dayNumber << ", part_two_sample)\n";
+    ofs << "TEST(day_" << dayNumber << ", part_two_sample)\n";
     ofs << "{\n";
     ofs << "    const auto answer = CreateSolver(true).solvePartTwo();\n";
     ofs << "    ASSERT_NE(answer, std::nullopt);\n";
@@ -148,6 +151,66 @@ void showNewDayContents(const std::filesystem::path& x, size_t indent = 1)
             --indent;
         }
     }
+}
+
+bool downloadInput(const std::string& dayNumber)
+{
+    auto success = true;
+
+    // TODO: Abstract this into a class
+    // https://curl.se/libcurl/c/https.html
+    curl_global_init(CURL_GLOBAL_DEFAULT);
+
+    // TODO: Could probably make sure we don't already have that file...
+    if(auto curl = curl_easy_init())
+    {
+        // TODO: Don't hard-code year and day
+        const auto url = "https://adventofcode.com/2022/day/" + dayNumber + "/input";
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+
+        // Disable progress bar
+        curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+
+        // Don't do any custom data parsing
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, nullptr);
+
+        // TODO: Compiler complains about usage of std::tmpnam. Use std::tmpfile instead.
+        std::string temporaryFile = std::tmpnam(nullptr);
+        if(auto file = fopen(temporaryFile.c_str(), "w"))
+        {
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+
+            const auto inputPath = config::GetInputFilePath();
+            // TODO: Read this from the filesystem, don't hard-code
+            const auto sessionFile = inputPath + "/.adventofcode.session";
+            const auto session = util::Parse(sessionFile).front();
+            //            const auto cookie = "session=" + session;
+            //            curl_easy_setopt(curl, CURLOPT_COOKIE, cookie.c_str());
+
+            curl_slist* list = nullptr;
+            list = curl_slist_append(list, "Content-Type: text/plain");
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);
+
+            if(auto res = curl_easy_perform(curl); res != CURLE_OK)
+            {
+                std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << "\n";
+                success = false;
+            }
+
+            fclose(file);
+
+            const std::filesystem::path dayInput = inputPath + "/" + dayNumber + ".txt";
+
+            // TODO: This may throw an exception
+            success = std::filesystem::copy_file(temporaryFile, dayInput);
+        }
+
+        curl_easy_cleanup(curl);
+    }
+
+    curl_global_cleanup();
+
+    return success;
 }
 
 int main(int argc, char* argv[])
@@ -193,11 +256,11 @@ int main(int argc, char* argv[])
 
     if(forceOverwrite)
     {
-        std::cout << "Overwriting day: " << newDay << "...\n";
+        std::cout << "Overwriting day " << newDay << "...\n";
     }
     else
     {
-        std::cout << "Starting new day: " << newDay << "...\n";
+        std::cout << "Starting new day " << newDay << "...\n";
     }
 
     if(!createCMakeLists(newDayPath))
@@ -211,6 +274,8 @@ int main(int argc, char* argv[])
         std::cerr << "Could not create source files for " << newDayPath << "\n";
         return EXIT_FAILURE;
     }
+
+    downloadInput(newDay);
 
     std::cout << "Files created:\n";
     showNewDayContents(newDayPath);
