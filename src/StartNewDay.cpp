@@ -216,7 +216,7 @@ int main(int argc, char* argv[])
     showNewDayContents(newDayPath);
     std::cout << "\n";
 
-    std::cout << "Be sure to add new directory to root solutions CMakeLists.txt and re-run CMake\n";
+    std::cout << "Re-run CMake to build the new day\n";
 
     return EXIT_SUCCESS;
 }
