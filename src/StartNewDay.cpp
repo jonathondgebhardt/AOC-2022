@@ -97,7 +97,7 @@ bool createSourceFiles(const std::filesystem::path& x)
     ofs << "        const auto inputFile = useSample ? \"" << dayNumber << "_sample.txt\" : \""
         << dayNumber << ".txt\";\n";
     ofs << "        Solver solver;\n";
-    ofs << "        solver.input = util::Parse(util::GetInputFile(inputFile));\n";
+    ofs << "        solver.mInput = util::Parse(util::GetInputFile(inputFile));\n";
     ofs << "        return solver;\n";
     ofs << "    }\n";
     ofs << "}\n";
@@ -115,18 +115,19 @@ bool createSourceFiles(const std::filesystem::path& x)
     ofs << "    ASSERT_NE(answer, std::nullopt);\n";
     ofs << "    std::cout << \"part two: \" << *answer << std::endl;\n";
     ofs << "}\n";
+    ofs << "\n";
     ofs << "TEST(day_" << dayNumber << ", part_one_sample)\n";
     ofs << "{\n";
     ofs << "    const auto answer = CreateSolver(true).solvePartOne();\n";
     ofs << "    ASSERT_NE(answer, std::nullopt);\n";
-    ofs << "    std::cout << \"part one sample: \" << *answer << std::endl;\n";
+    ofs << "    // EXPECT_EQ(*answer, PART_ONE_SAMPLE_ANSWER);\n";
     ofs << "}\n";
     ofs << "\n";
     ofs << "TEST(day_" << dayNumber << ", part_two_sample)\n";
     ofs << "{\n";
     ofs << "    const auto answer = CreateSolver(true).solvePartTwo();\n";
     ofs << "    ASSERT_NE(answer, std::nullopt);\n";
-    ofs << "    std::cout << \"part two sample: \" << *answer << std::endl;\n";
+    ofs << "    // EXPECT_EQ(*answer, PART_TWO_SAMPLE_ANSWER);\n";
     ofs << "}\n";
 
     return true;
@@ -164,6 +165,51 @@ bool downloadInput(const std::string& dayNumber)
         for(const auto& line : content)
         {
             ofs << line << "\n";
+        }
+
+        success = true;
+    }
+
+    return success;
+}
+
+bool downloadSampleInput(const std::string& dayNumber)
+{
+    auto success = false;
+
+    HttpsRequest request;
+    request.setUrl("https://adventofcode.com/2022/day/" + dayNumber);
+    request.setContentType("text/html");
+    if(const auto content = request(); !content.empty())
+    {
+        std::ofstream ofs{config::GetInputFilePath() + "/" + dayNumber + "_sample.txt"};
+
+        // Beginning of sample input starts with "<pre><code>" and ends with "</code></pre>"
+        // Ex:
+        // <pre><code>A Y
+        // B X
+        // C Z
+        // </code></pre>
+        auto sampleInputFound = false;
+        for(const auto& line : content)
+        {
+            auto sampleInput = line;
+            if(line.find("<pre><code>") != std::string::npos)
+            {
+                sampleInputFound = true;
+
+                sampleInput = line.substr(line.find_last_of('>') + 1);
+            }
+
+            if(line == "</code></pre>")
+            {
+                break;
+            }
+
+            if(sampleInputFound)
+            {
+                ofs << sampleInput << "\n";
+            }
         }
 
         success = true;
@@ -238,6 +284,12 @@ int main(int argc, char* argv[])
     {
         std::cerr << "Could not download input\n";
         return EXIT_FAILURE;
+    }
+
+    if(!downloadSampleInput(newDay))
+    {
+        // This is not a deal breaker. Just grab it yourself ya bum.
+        std::cerr << "Could not download sample input\n";
     }
 
     std::cout << "Files created:\n";

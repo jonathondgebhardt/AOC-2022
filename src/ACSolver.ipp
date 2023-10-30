@@ -39,5 +39,5 @@ struct ACSolver
     /// \var input
     /// \brief Where all of the challenge input will be stored.
     // TODO: Make a type to describe input?
-    std::vector<std::string> input;
+    std::vector<std::string> mInput;
 };
