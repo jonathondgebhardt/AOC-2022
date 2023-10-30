@@ -106,6 +106,7 @@ bool createSourceFiles(const std::filesystem::path& x)
     ofs << "{\n";
     ofs << "    const auto answer = CreateSolver(false).solvePartOne();\n";
     ofs << "    ASSERT_NE(answer, std::nullopt);\n";
+    ofs << "    // EXPECT_EQ(*answer, INSERT_CORRECT_ANSWER);\n";
     ofs << "    std::cout << \"part one: \" << *answer << std::endl;\n";
     ofs << "}\n";
     ofs << "\n";
@@ -113,6 +114,7 @@ bool createSourceFiles(const std::filesystem::path& x)
     ofs << "{\n";
     ofs << "    const auto answer = CreateSolver(false).solvePartTwo();\n";
     ofs << "    ASSERT_NE(answer, std::nullopt);\n";
+    ofs << "    // EXPECT_EQ(*answer, INSERT_CORRECT_ANSWER);\n";
     ofs << "    std::cout << \"part two: \" << *answer << std::endl;\n";
     ofs << "}\n";
     ofs << "\n";
