@@ -153,7 +153,7 @@ void showNewDayContents(const std::filesystem::path& x, size_t indent = 1)
 
 bool downloadInput(const std::string& dayNumber)
 {
-    auto success = true;
+    auto success = false;
 
     HttpsRequest request;
     request.setUrl("https://adventofcode.com/2022/day/" + dayNumber + "/input");
@@ -165,6 +165,8 @@ bool downloadInput(const std::string& dayNumber)
         {
             ofs << line << "\n";
         }
+
+        success = true;
     }
 
     return success;
@@ -232,7 +234,11 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    downloadInput(newDay);
+    if(!downloadInput(newDay))
+    {
+        std::cerr << "Could not download input\n";
+        return EXIT_FAILURE;
+    }
 
     std::cout << "Files created:\n";
     showNewDayContents(newDayPath);

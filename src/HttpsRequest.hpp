@@ -1,9 +1,4 @@
-//
-// Created by jon on 10/29/23.
-//
-
-#ifndef AOC_2022_HTTPSREQUEST_HPP
-#define AOC_2022_HTTPSREQUEST_HPP
+#pragma once
 
 #include <curl/curl.h>
 #include <string>
@@ -29,5 +24,3 @@ class HttpsRequest
   private:
     CURL* mCurl = nullptr;
 };
-
-#endif // AOC_2022_HTTPSREQUEST_HPP

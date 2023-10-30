@@ -30,8 +30,6 @@ HttpsRequest::HttpsRequest()
     // Disable progress bar
     curl_easy_setopt(mCurl, CURLOPT_NOPROGRESS, 1L);
 
-    //    curl_easy_setopt(mCurl, CURLOPT_VERBOSE, 1L);
-
     // Don't do any custom data parsing
     // TODO: Perhaps I could push content into a vector instead of writing to a file and then
     // reading.
@@ -79,17 +77,22 @@ std::vector<std::string> HttpsRequest::operator()() const
     }
 
     const auto cookie = GetCookie();
+    if(cookie.empty())
+    {
+        std::cerr << "Could not load session file\n";
+    }
+
     curl_easy_setopt(mCurl, CURLOPT_COOKIE, cookie.c_str());
 
     // TODO: Compiler complains about usage of std::tmpnam. Use std::tmpfile instead.
-    std::string temporaryFile = "foo";
+    std::string temporaryFile = std::tmpnam(nullptr);
     if(auto file = fopen(temporaryFile.c_str(), "w"))
     {
         curl_easy_setopt(mCurl, CURLOPT_WRITEDATA, file);
 
         if(curl_easy_perform(mCurl) != CURLE_OK)
         {
-            // TODO: uh-oh
+            std::cerr << "Could not perform HTTPS request\n";
         }
 
         fclose(file);
