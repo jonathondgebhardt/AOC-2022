@@ -2,7 +2,23 @@
 // Created by jon on 10/29/23.
 //
 
-#include "HttpsRequest.h"
+#include "HttpsRequest.hpp"
+#include "InputDirectoryConfig.hpp"
+#include "Utilities.ipp"
+
+namespace
+{
+    std::string GetCookie()
+    {
+        const auto sessionFile = config::GetInputFilePath() + "/.adventofcode.session";
+        if(const auto sessions = util::Parse(sessionFile); !sessions.empty())
+        {
+            return "session=" + sessions.front();
+        }
+
+        return {};
+    }
+}
 
 HttpsRequest::HttpsRequest()
 {
@@ -14,7 +30,11 @@ HttpsRequest::HttpsRequest()
     // Disable progress bar
     curl_easy_setopt(mCurl, CURLOPT_NOPROGRESS, 1L);
 
+    //    curl_easy_setopt(mCurl, CURLOPT_VERBOSE, 1L);
+
     // Don't do any custom data parsing
+    // TODO: Perhaps I could push content into a vector instead of writing to a file and then
+    // reading.
     curl_easy_setopt(mCurl, CURLOPT_WRITEFUNCTION, nullptr);
 }
 
@@ -46,30 +66,36 @@ void HttpsRequest::setContentType(const std::string& type)
 void HttpsRequest::setContentType(const char* type)
 {
     curl_slist* list = nullptr;
-    list = curl_slist_append(list, "Content-Type: " + type);
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, list);
+    const std::string content = std::string("Content-Type: ") + type;
+    list = curl_slist_append(list, content.c_str());
+    curl_easy_setopt(mCurl, CURLOPT_HTTPHEADER, list);
 }
 
-void HttpsRequest::setFile(const std::string& file)
+std::vector<std::string> HttpsRequest::operator()() const
 {
-    setFile(file.c_str());
+    if(!mCurl)
+    {
+        return {};
+    }
+
+    const auto cookie = GetCookie();
+    curl_easy_setopt(mCurl, CURLOPT_COOKIE, cookie.c_str());
+
+    // TODO: Compiler complains about usage of std::tmpnam. Use std::tmpfile instead.
+    std::string temporaryFile = "foo";
+    if(auto file = fopen(temporaryFile.c_str(), "w"))
+    {
+        curl_easy_setopt(mCurl, CURLOPT_WRITEDATA, file);
+
+        if(curl_easy_perform(mCurl) != CURLE_OK)
+        {
+            // TODO: uh-oh
+        }
+
+        fclose(file);
+
+        return util::Parse(temporaryFile);
+    }
+
+    return {};
 }
-
-void HttpsRequest::setFile(const char* file)
-{
-    curl_easy_setopt(mCurl, CURLOPT_WRITEDATA, file);
-}
-
-bool HttpsRequest::operator()() const
-{
-    const auto inputPath = config::GetInputFilePath();
-    // TODO: Read this from the filesystem, don't hard-code
-    const auto sessionFile = inputPath + "/.adventofcode.session";
-    const auto session = util::Parse(sessionFile).front();
-    //            const auto cookie = "session=" + session;
-    //            curl_easy_setopt(mCurl, CURLOPT_COOKIE, cookie.c_str());
-
-    return curl_easy_perform(mCurl) == CURLE_OK;
-}
-
-

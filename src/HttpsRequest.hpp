@@ -2,11 +2,12 @@
 // Created by jon on 10/29/23.
 //
 
-#ifndef AOC_2022_HTTPSREQUEST_H
-#define AOC_2022_HTTPSREQUEST_H
+#ifndef AOC_2022_HTTPSREQUEST_HPP
+#define AOC_2022_HTTPSREQUEST_HPP
 
 #include <curl/curl.h>
 #include <string>
+#include <vector>
 
 class HttpsRequest
 {
@@ -14,19 +15,19 @@ class HttpsRequest
     HttpsRequest();
     ~HttpsRequest();
 
+    HttpsRequest(const HttpsRequest&) = delete;
+    HttpsRequest& operator=(const HttpsRequest&) = delete;
+
     void setUrl(const std::string& url);
     void setUrl(const char* url);
 
     void setContentType(const std::string& type);
     void setContentType(const char* type);
 
-    void setFile(const std::string& file);
-    void setFile(const char* file);
-
-    bool operator()() const;
+    std::vector<std::string> operator()() const;
 
   private:
     CURL* mCurl = nullptr;
 };
 
-#endif // AOC_2022_HTTPSREQUEST_H
+#endif // AOC_2022_HTTPSREQUEST_HPP

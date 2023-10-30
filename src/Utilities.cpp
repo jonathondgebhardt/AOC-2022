@@ -1,6 +1,6 @@
 #include "Utilities.ipp"
 
-#include <InputDirectoryConfig.ipp>
+#include "InputDirectoryConfig.hpp"
 #include <fstream>
 #include <iostream>
 

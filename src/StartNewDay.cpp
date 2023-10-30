@@ -1,8 +1,5 @@
-#include <InputDirectoryConfig.ipp>
-
-#include "HttpsRequest.h"
-#include "Utilities.ipp"
-#include <curl/curl.h>
+#include "HttpsRequest.hpp"
+#include "InputDirectoryConfig.hpp"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -160,21 +157,14 @@ bool downloadInput(const std::string& dayNumber)
 
     HttpsRequest request;
     request.setUrl("https://adventofcode.com/2022/day/" + dayNumber + "/input");
-
-    // TODO: Compiler complains about usage of std::tmpnam. Use std::tmpfile instead.
-    std::string temporaryFile = std::tmpnam(nullptr);
-    if(auto file = fopen(temporaryFile.c_str(), "w"))
+    request.setContentType("text/plain");
+    if(const auto content = request(); !content.empty())
     {
-        request.setFile(temporaryFile.c_str());
-        request.setContentType("text/plain");
-        success = request();
-
-        fclose(file);
-
-        const std::filesystem::path dayInput = inputPath + "/" + dayNumber + ".txt";
-
-        // TODO: This may throw an exception
-        success = std::filesystem::copy_file(temporaryFile, dayInput);
+        std::ofstream ofs{config::GetInputFilePath() + "/" + dayNumber + ".txt"};
+        for(const auto& line : content)
+        {
+            ofs << line << "\n";
+        }
     }
 
     return success;

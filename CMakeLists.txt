@@ -20,17 +20,18 @@ include_directories(src)
 
 get_filename_component(INPUT_FILE_PATH "inputs" REALPATH BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(SOLUTIONS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/solutions")
-configure_file(src/InputDirectoryConfig.ipp.in ${CMAKE_BINARY_DIR}/generated/InputDirectoryConfig.ipp)
+configure_file(src/InputDirectoryConfig.cpp.in ${CMAKE_BINARY_DIR}/generated/InputDirectoryConfig.cpp)
 include_directories(${CMAKE_BINARY_DIR}/generated/)
 
 set(AOC_SOURCE_H
     src/ACSolver.ipp
     src/Utilities.ipp
-    ${CMAKE_BINARY_DIR}/generated/InputDirectoryConfig.ipp
+    src/InputDirectoryConfig.hpp
 )
 
 set(AOC_SOURCE
     src/Utilities.cpp
+    ${CMAKE_BINARY_DIR}/generated/InputDirectoryConfig.cpp
 )
 
 add_library(AOC STATIC
@@ -48,7 +49,7 @@ set(BUILD_STARTNEWDAY ON CACHE BOOL "Enable building StartNewDay")
 if(BUILD_STARTNEWDAY)
     # TODO: Use vcpkg now that we have two dependencies?
     find_package(CURL REQUIRED)
-    add_executable(StartNewDay src/StartNewDay.cpp src/HttpsRequest.cpp src/HttpsRequest.h)
+    add_executable(StartNewDay src/StartNewDay.cpp src/HttpsRequest.cpp src/HttpsRequest.hpp)
     target_include_directories(StartNewDay PRIVATE ${CURL_INCLUDE_DIRS})
     target_link_libraries(StartNewDay ${CURL_LIBRARIES} AOC)
 endif()
