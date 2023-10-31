@@ -39,20 +39,11 @@ add_library(AOC STATIC
     ${AOC_SOURCE}
 )
 
-set(BUILD_SOLUTIONS ON CACHE BOOL "Enable building solutions")
-if(BUILD_SOLUTIONS)
-    add_subdirectory(solutions)
-endif()
-
-
-set(BUILD_STARTNEWDAY ON CACHE BOOL "Enable building StartNewDay")
-if(BUILD_STARTNEWDAY)
-    # TODO: Use vcpkg now that we have two dependencies?
-    find_package(CURL REQUIRED)
-    add_executable(StartNewDay src/StartNewDay.cpp src/HttpsRequest.cpp src/HttpsRequest.hpp)
-    target_include_directories(StartNewDay PRIVATE ${CURL_INCLUDE_DIRS})
-    target_link_libraries(StartNewDay ${CURL_LIBRARIES} AOC)
-endif()
+# TODO: Use vcpkg now that we have two dependencies?
+find_package(CURL REQUIRED)
+add_executable(StartNewDay src/StartNewDay.cpp src/HttpsRequest.cpp src/HttpsRequest.hpp)
+target_include_directories(StartNewDay PRIVATE ${CURL_INCLUDE_DIRS})
+target_link_libraries(StartNewDay ${CURL_LIBRARIES} AOC)
 
 # https://crascit.com/2015/07/25/cmake-gtest/
 # Download and unpack googletest at configure time
@@ -80,9 +71,12 @@ add_subdirectory(
 # The gtest/gmock targets carry header search path dependencies
 # automatically when using CMake 2.8.11 or later. Otherwise we
 # have to add them here ourselves.
-if (CMAKE_VERSION VERSION_LESS 2.8.11)
+if(CMAKE_VERSION VERSION_LESS 2.8.11)
     include_directories(
         "${gtest_SOURCE_DIR}/include"
         "${gmock_SOURCE_DIR}/include"
     )
-endif ()
+endif()
+
+enable_testing()
+add_subdirectory(solutions)

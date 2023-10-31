@@ -37,7 +37,7 @@ bool createCMakeLists(const std::filesystem::path& x)
         ofs << "cmake_minimum_required(VERSION 3.0)\n";
 
         const auto dayNumber = std::string(x.filename());
-        ofs << "project(" << dayNumber << " CXX)\n";
+        ofs << "project(day" << dayNumber << " CXX)\n";
         ofs << "\n";
 
         ofs << "enable_testing()\n";
@@ -50,7 +50,6 @@ bool createCMakeLists(const std::filesystem::path& x)
 
         ofs << "include(GoogleTest)\n";
         ofs << "gtest_discover_tests(${PROJECT_NAME})\n";
-        ofs << "\n";
 
         return true;
     }
