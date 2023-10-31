@@ -40,9 +40,6 @@ bool createCMakeLists(const std::filesystem::path& x)
         ofs << "project(day" << dayNumber << " CXX)\n";
         ofs << "\n";
 
-        ofs << "enable_testing()\n";
-        ofs << "\n";
-
         const auto solutionFile = dayNumber + ".cpp";
         ofs << "add_executable(${PROJECT_NAME} " << solutionFile << ")\n";
         ofs << "target_link_libraries(${PROJECT_NAME} GTest::gtest_main AOC)\n";
@@ -101,7 +98,7 @@ bool createSourceFiles(const std::filesystem::path& x)
     ofs << "    }\n";
     ofs << "}\n";
     ofs << "\n";
-    ofs << "TEST(day_" << dayNumber << ", part_one)\n";
+    ofs << "TEST(day_" << dayNumber << ", part_1)\n";
     ofs << "{\n";
     ofs << "    const auto answer = CreateSolver(false).solvePartOne();\n";
     ofs << "    ASSERT_NE(answer, std::nullopt);\n";
@@ -109,7 +106,7 @@ bool createSourceFiles(const std::filesystem::path& x)
     ofs << "    std::cout << \"part one: \" << *answer << std::endl;\n";
     ofs << "}\n";
     ofs << "\n";
-    ofs << "TEST(day_" << dayNumber << ", part_two)\n";
+    ofs << "TEST(day_" << dayNumber << ", part_2)\n";
     ofs << "{\n";
     ofs << "    const auto answer = CreateSolver(false).solvePartTwo();\n";
     ofs << "    ASSERT_NE(answer, std::nullopt);\n";
@@ -117,14 +114,14 @@ bool createSourceFiles(const std::filesystem::path& x)
     ofs << "    std::cout << \"part two: \" << *answer << std::endl;\n";
     ofs << "}\n";
     ofs << "\n";
-    ofs << "TEST(day_" << dayNumber << ", part_one_sample)\n";
+    ofs << "TEST(day_" << dayNumber << ", sample_part_1)\n";
     ofs << "{\n";
     ofs << "    const auto answer = CreateSolver(true).solvePartOne();\n";
     ofs << "    ASSERT_NE(answer, std::nullopt);\n";
     ofs << "    // EXPECT_EQ(*answer, PART_ONE_SAMPLE_ANSWER);\n";
     ofs << "}\n";
     ofs << "\n";
-    ofs << "TEST(day_" << dayNumber << ", part_two_sample)\n";
+    ofs << "TEST(day_" << dayNumber << ", sample_part_2)\n";
     ofs << "{\n";
     ofs << "    const auto answer = CreateSolver(true).solvePartTwo();\n";
     ofs << "    ASSERT_NE(answer, std::nullopt);\n";
