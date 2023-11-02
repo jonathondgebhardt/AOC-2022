@@ -1,8 +1,8 @@
 #pragma once
 
 #include <curl/curl.h>
+#include <optional>
 #include <string>
-#include <vector>
 
 class HttpsRequest
 {
@@ -19,8 +19,9 @@ class HttpsRequest
     void setContentType(const std::string& type);
     void setContentType(const char* type);
 
-    std::vector<std::string> operator()() const;
+    std::optional<std::string> operator()() const;
 
   private:
     CURL* mCurl = nullptr;
+    std::string mReadBuffer;
 };

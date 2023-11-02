@@ -8,7 +8,7 @@
 
 namespace
 {
-    std::string GetCookie()
+    std::optional<std::string> GetCookie()
     {
         const auto sessionFile = config::GetInputFilePath() + "/.adventofcode.session";
         if(const auto sessions = util::Parse(sessionFile); !sessions.empty())
@@ -17,6 +17,13 @@ namespace
         }
 
         return {};
+    }
+
+    // https://stackoverflow.com/questions/9786150/save-curl-content-result-into-a-string-in-c
+    size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp)
+    {
+        ((std::string*)userp)->append((char*)contents, size * nmemb);
+        return size * nmemb;
     }
 }
 
@@ -30,10 +37,18 @@ HttpsRequest::HttpsRequest()
     // Disable progress bar
     curl_easy_setopt(mCurl, CURLOPT_NOPROGRESS, 1L);
 
-    // Don't do any custom data parsing
-    // TODO: Perhaps I could push content into a vector instead of writing to a file and then
-    // reading.
-    curl_easy_setopt(mCurl, CURLOPT_WRITEFUNCTION, nullptr);
+    // Read contents into mReadBuffer.
+    curl_easy_setopt(mCurl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    curl_easy_setopt(mCurl, CURLOPT_WRITEDATA, &mReadBuffer);
+
+    if(const auto cookie = GetCookie())
+    {
+        curl_easy_setopt(mCurl, CURLOPT_COOKIE, (*cookie).c_str());
+    }
+    else
+    {
+        std::cerr << "Could not load session file\n";
+    }
 }
 
 HttpsRequest::~HttpsRequest()
@@ -69,35 +84,22 @@ void HttpsRequest::setContentType(const char* type)
     curl_easy_setopt(mCurl, CURLOPT_HTTPHEADER, list);
 }
 
-std::vector<std::string> HttpsRequest::operator()() const
+std::optional<std::string> HttpsRequest::operator()() const
 {
-    if(!mCurl)
+    if(mCurl)
     {
-        return {};
-    }
-
-    const auto cookie = GetCookie();
-    if(cookie.empty())
-    {
-        std::cerr << "Could not load session file\n";
-    }
-
-    curl_easy_setopt(mCurl, CURLOPT_COOKIE, cookie.c_str());
-
-    // TODO: Compiler complains about usage of std::tmpnam. Use std::tmpfile instead.
-    std::string temporaryFile = std::tmpnam(nullptr);
-    if(auto file = fopen(temporaryFile.c_str(), "w"))
-    {
-        curl_easy_setopt(mCurl, CURLOPT_WRITEDATA, file);
-
-        if(curl_easy_perform(mCurl) != CURLE_OK)
+        if(curl_easy_perform(mCurl) == CURLE_OK)
+        {
+            return mReadBuffer;
+        }
+        else
         {
             std::cerr << "Could not perform HTTPS request\n";
         }
-
-        fclose(file);
-
-        return util::Parse(temporaryFile);
+    }
+    else
+    {
+        std::cerr << "Could initialize CURL environment\n";
     }
 
     return {};

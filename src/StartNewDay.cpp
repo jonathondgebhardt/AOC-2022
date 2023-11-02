@@ -157,13 +157,10 @@ bool downloadInput(const std::string& dayNumber)
     HttpsRequest request;
     request.setUrl("https://adventofcode.com/2022/day/" + dayNumber + "/input");
     request.setContentType("text/plain");
-    if(const auto content = request(); !content.empty())
+    if(const auto content = request())
     {
         std::ofstream ofs{config::GetInputFilePath() + "/" + dayNumber + ".txt"};
-        for(const auto& line : content)
-        {
-            ofs << line << "\n";
-        }
+        ofs << *content;
 
         success = true;
     }
@@ -178,37 +175,21 @@ bool downloadSampleInput(const std::string& dayNumber)
     HttpsRequest request;
     request.setUrl("https://adventofcode.com/2022/day/" + dayNumber);
     request.setContentType("text/html");
-    if(const auto content = request(); !content.empty())
+    if(const auto content = request())
     {
-        std::ofstream ofs{config::GetInputFilePath() + "/" + dayNumber + "_sample.txt"};
-
         // Beginning of sample input starts with "<pre><code>" and ends with "</code></pre>"
         // Ex:
         // <pre><code>A Y
         // B X
         // C Z
         // </code></pre>
-        auto sampleInputFound = false;
-        for(const auto& line : content)
-        {
-            auto sampleInput = line;
-            if(line.find("<pre><code>") != std::string::npos)
-            {
-                sampleInputFound = true;
+        const std::string startTags = "<pre><code>";
+        const auto beginPos = (*content).find(startTags) + startTags.size();
+        const auto endTags = "</code></pre>";
+        const auto size = (*content).find(endTags) - beginPos;
 
-                sampleInput = line.substr(line.find_last_of('>') + 1);
-            }
-
-            if(line == "</code></pre>")
-            {
-                break;
-            }
-
-            if(sampleInputFound)
-            {
-                ofs << sampleInput << "\n";
-            }
-        }
+        std::ofstream ofs{config::GetInputFilePath() + "/" + dayNumber + "_sample.txt"};
+        ofs << (*content).substr(beginPos, size);
 
         success = true;
     }
@@ -278,6 +259,7 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
+    // TODO: Show where inputs are saved?
     if(!downloadInput(newDay))
     {
         std::cerr << "Could not download input\n";
