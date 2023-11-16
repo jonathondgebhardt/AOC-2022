@@ -36,7 +36,7 @@ bool createCMakeLists(const std::filesystem::path& x)
         // TODO: Update this version number
         ofs << "cmake_minimum_required(VERSION 3.0)\n";
 
-        const auto dayNumber = std::string(x.filename());
+        const auto dayNumber = x.filename().generic_string();
         ofs << "project(day" << dayNumber << " CXX)\n";
         ofs << "\n";
 
@@ -57,7 +57,7 @@ bool createCMakeLists(const std::filesystem::path& x)
 // TODO: Use an in-file for this?
 bool createSourceFiles(const std::filesystem::path& x)
 {
-    const auto dayNumber = std::string(x.filename());
+    const auto dayNumber = x.filename().generic_string();
     const auto solutionFile = dayNumber + ".cpp";
     std::ofstream ofs{x / solutionFile};
     if(!ofs.is_open())
@@ -228,7 +228,7 @@ int main(int argc, char* argv[])
     }
 
     const auto newDayPath = solutionsPath / newDay;
-    if(!tryCreateSolutionDirectory(newDayPath, forceOverwrite))
+    if(!tryCreateSolutionDirectory(newDayPath.generic_string(), forceOverwrite))
     {
         std::cerr << "Could not create new subdirectory " << newDayPath << "\n";
         std::cerr << "Check write permissions or if subdirectory already exists\n";
