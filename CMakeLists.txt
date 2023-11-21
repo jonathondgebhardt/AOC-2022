@@ -67,6 +67,10 @@ if(MSVC)
 
     file(COPY ${WINDOWS_VCPKG_BIN_RELEASE}/zlib1.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release)
     file(COPY ${WINDOWS_VCPKG_BIN_DEBUG}/zlibd1.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug)
+
+    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+    set_target_properties(AOC PROPERTIES FOLDER "Utilities")
+    set_target_properties(StartNewDay PROPERTIES FOLDER "Utilities")
 endif()
 
 enable_testing()

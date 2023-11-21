@@ -48,10 +48,18 @@ bool createCMakeLists(const std::filesystem::path& x)
         ofs << "include(GoogleTest)\n";
         ofs << "gtest_discover_tests(${PROJECT_NAME})\n";
 
-        return true;
-    }
+#ifdef WIN32
+		ofs << "\n";
 
-    return false;
+        ofs << "if(WIN32)\n";
+		ofs << "\tset_target_properties(${PROJECT_NAME} PROPERTIES FOLDER \"Solutions\")" << "\n";
+        ofs << "endif()\n";
+#endif
+
+		return true;
+	}
+
+	return false;
 }
 
 // TODO: Use an in-file for this?
