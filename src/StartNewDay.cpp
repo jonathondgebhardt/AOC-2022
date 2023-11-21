@@ -53,6 +53,7 @@ bool createCMakeLists(const std::filesystem::path& x)
 
         ofs << "if(WIN32)\n";
 		ofs << "\tset_target_properties(${PROJECT_NAME} PROPERTIES FOLDER \"Solutions\")" << "\n";
+        ofs << "target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/inputs/" + dayNumber +".txt ${CMAKE_SOURCE_DIR}/inputs/" + dayNumber + "_sample.txt)\n";
         ofs << "endif()\n";
 #endif
 
