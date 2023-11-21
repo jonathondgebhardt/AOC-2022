@@ -7,8 +7,8 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems
 # Save on initial build time by only building vcpkg packages in release.
 set(VCPKG_OVERLAY_TRIPLETS "${CMAKE_CURRENT_LIST_DIR}/triplets")
 
-# TODO: Don't hardcode year
-project(AOC_2022 CXX)
+# TODO: Make a variable to describe the year?
+project(AOC CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
