@@ -55,6 +55,20 @@ find_package(CURL CONFIG REQUIRED)
 add_executable(StartNewDay src/StartNewDay.cpp src/HttpsRequest.cpp src/HttpsRequest.hpp)
 target_link_libraries(StartNewDay PRIVATE CURL::libcurl AOC)
 
+if(MSVC)
+    set(WINDOWS_VCPKG_BIN_RELEASE ${VCPKG_INSTALLED_DIR}/x64-windows/bin)
+    set(WINDOWS_VCPKG_BIN_DEBUG ${VCPKG_INSTALLED_DIR}/x64-windows/debug/bin)
+
+    file(COPY ${WINDOWS_VCPKG_BIN_RELEASE}/libcurl.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release)
+    file(COPY ${WINDOWS_VCPKG_BIN_DEBUG}/libcurl-d.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug)
+
+    file(COPY ${WINDOWS_VCPKG_BIN_RELEASE}/gtest.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release)
+    file(COPY ${WINDOWS_VCPKG_BIN_DEBUG}/gtest.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug)
+
+    file(COPY ${WINDOWS_VCPKG_BIN_RELEASE}/zlib1.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release)
+    file(COPY ${WINDOWS_VCPKG_BIN_DEBUG}/zlibd1.dll DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Debug)
+endif()
+
 enable_testing()
 find_package(GTest CONFIG REQUIRED)
 add_subdirectory(solutions)
