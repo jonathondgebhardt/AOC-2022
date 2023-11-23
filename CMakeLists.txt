@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.0...3.5)
 
 # Must be done before the first call to project()
 # https://github.com/Microsoft/vcpkg#vcpkg-with-visual-studio-cmake-projects
