@@ -6,9 +6,6 @@ This template is inspired by https://github.com/fspoettel/advent-of-code-rust. T
 ## Building
 Click "Use this template" and create your repository, then clone and build. This project depends on gtest and libcurl, which will be downloaded and built automatically via vcpkg.
 
-### perl dependency
-There is perl dependency for Linux users that is not retrieved by vcpkg. If you see CMake errors about IPC or perl, please get perl from your package manager.
-
 **Important note:** this project uses submodules to make initializing vcpkg easier and to force a stable build of third party dependencies. Please use the `--recurse-submodules` when cloning. If you forgot to do this for the clone, you can also `git submodule update --init --recursive`.
 
 ```sh
@@ -18,6 +15,9 @@ mkdir build && cd build
 cmake ../
 cmake --build .
 ```
+
+### perl dependency
+There is perl dependency for Linux users that is not retrieved by vcpkg. If you see CMake errors about IPC or perl, please get perl from your package manager.
 
 ## Enabling downloading inputs
 `StartNewDay` will download your input for you, but in order to do that, it needs your session cookie. Login to https://adventofcode.com, press F12, and find your session token. On Firefox, this is located under the "Storage" tab then the "Cookies" menu. Paste the value into a file in the "inputs" subdirectory in a file called ".adventofcode.session".
