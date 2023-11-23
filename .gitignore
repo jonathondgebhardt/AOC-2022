@@ -31,5 +31,6 @@ cmake-build*
 
 .idea
 .vscode
+Testing
 
 inputs/
