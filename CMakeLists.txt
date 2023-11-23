@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.0...3.5)
 
 # Must be done before the first call to project()
 # https://github.com/Microsoft/vcpkg#vcpkg-with-visual-studio-cmake-projects
@@ -52,8 +52,9 @@ add_library(AOC STATIC
 )
 
 find_package(CURL CONFIG REQUIRED)
+find_package(cxxopts CONFIG REQUIRED)
 add_executable(StartNewDay src/StartNewDay.cpp src/HttpsRequest.cpp src/HttpsRequest.hpp)
-target_link_libraries(StartNewDay PRIVATE CURL::libcurl AOC)
+target_link_libraries(StartNewDay PRIVATE CURL::libcurl cxxopts::cxxopts AOC)
 
 if(MSVC)
     set(WINDOWS_VCPKG_BIN_RELEASE ${VCPKG_INSTALLED_DIR}/x64-windows/bin)

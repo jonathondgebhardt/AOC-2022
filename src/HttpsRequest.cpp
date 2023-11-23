@@ -41,6 +41,12 @@ HttpsRequest::HttpsRequest()
     curl_easy_setopt(mCurl, CURLOPT_WRITEFUNCTION, WriteCallback);
     curl_easy_setopt(mCurl, CURLOPT_WRITEDATA, &mReadBuffer);
 
+    // Include user agent information in the header
+    // https://www.reddit.com/r/adventofcode/wiki/faqs/automation/
+    const auto userAgent =
+        "https://github.com/jonathondgebhardt/aoc-cli-cpp by jonathon.gebhardt@gmail.com";
+    curl_easy_setopt(mCurl, CURLOPT_USERAGENT, userAgent);
+
     if(const auto cookie = GetCookie())
     {
         curl_easy_setopt(mCurl, CURLOPT_COOKIE, (*cookie).c_str());
