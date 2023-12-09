@@ -57,6 +57,10 @@ add_executable(StartNewDay src/StartNewDay.cpp src/HttpsRequest.cpp src/HttpsReq
 target_link_libraries(StartNewDay PRIVATE CURL::libcurl cxxopts::cxxopts AOC)
 
 if(MSVC)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif()
+
+if(MSVC)
     set(WINDOWS_VCPKG_BIN_RELEASE ${VCPKG_INSTALLED_DIR}/x64-windows/bin)
     set(WINDOWS_VCPKG_BIN_DEBUG ${VCPKG_INSTALLED_DIR}/x64-windows/debug/bin)
 

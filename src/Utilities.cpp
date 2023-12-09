@@ -20,9 +20,6 @@ std::vector<std::string> util::Parse(const std::string& x)
         {
             contents.push_back(line);
         }
-
-        // Add the trailing new line to preserve input representation.
-        contents.emplace_back();
     }
     else
     {
@@ -40,7 +37,10 @@ std::vector<std::string> util::Split(const std::string& x, char delimiter)
     std::string s;
     while(std::getline(ss, s, delimiter))
     {
-        tokens.push_back(s);
+        if(!s.empty())
+        {
+            tokens.push_back(s);
+        }
     }
 
     return tokens;
