@@ -139,7 +139,7 @@ bool CreateSourceFiles(const std::filesystem::path& x)
 bool DownloadInput()
 {
     const auto fileName = std::format("{}/{}.txt", config::GetInputFilePath(), DAY);
-    if(std::filesystem::exists(fileName))
+    if(!FORCE_OVERWRITE && std::filesystem::exists(fileName))
     {
         std::println("Input file already exists: '{}'", fileName);
         return true;
@@ -174,7 +174,7 @@ bool DownloadInput()
 bool DownloadSampleInput()
 {
     const auto fileName = std::format("{}/{}_sample.txt", config::GetInputFilePath(), DAY);
-    if(std::filesystem::exists(fileName))
+    if(!FORCE_OVERWRITE && std::filesystem::exists(fileName))
     {
         std::println("Input file already exists: '{}'", fileName);
         return true;
