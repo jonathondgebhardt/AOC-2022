@@ -2,6 +2,7 @@
 
 #include <optional>
 #include <string>
+#include <string_view>
 
 #include <curl/curl.h>
 
@@ -17,11 +18,8 @@ class HttpsRequest
     HttpsRequest& operator=(const HttpsRequest&) = delete;
     HttpsRequest& operator=(HttpsRequest&& other) noexcept;
 
-    void setUrl(const std::string& url) const;
-    void setUrl(const char* url) const;
-
-    void setContentType(const std::string& type) const;
-    void setContentType(const char* type) const;
+    void setUrl(std::string_view url) const;
+    void setContentType(std::string_view type) const;
 
     std::optional<std::string> operator()() const;
 

@@ -7,16 +7,16 @@
 
 namespace util
 {
-    std::string GetInputFile(const std::string& stem);
+    std::string GetInputFile(std::string_view stem);
 
-    std::vector<std::string> ParseToContainer(const std::string& filePath);
+    std::vector<std::string> ParseToContainer(std::string_view filePath);
 
-    std::string Parse(const std::string& filePath);
+    std::string Parse(std::string_view filePath);
 
-    template <class T> T StringTo(const std::string& x)
+    template <class T> T StringTo(std::string_view x)
     {
         T result;
-        std::stringstream ss(x);
+        std::stringstream ss{x.data()};
         ss >> result;
 
         return result;
@@ -31,5 +31,5 @@ namespace util
         return converted;
     }
 
-    std::vector<std::string> Split(const std::string& x, char delimiter = ' ');
+    std::vector<std::string> Split(std::string_view x, char delimiter = ' ');
 }

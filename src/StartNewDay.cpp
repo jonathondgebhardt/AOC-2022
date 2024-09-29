@@ -65,7 +65,7 @@ bool YearIsValid()
     return year >= 2015 && year <= GetCurrentYear();
 }
 
-bool TryCreateSolutionDirectory(const std::string& rootPath)
+bool TryCreateSolutionDirectory(const std::string_view rootPath)
 {
     if(std::filesystem::exists(rootPath) && !FORCE_OVERWRITE)
     {

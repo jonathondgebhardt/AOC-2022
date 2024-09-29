@@ -4,15 +4,15 @@
 #include "InputDirectoryConfig.hpp"
 #include "Utilities.ipp"
 
-std::string util::GetInputFile(const std::string& stem)
+std::string util::GetInputFile(const std::string_view stem)
 {
     return std::format("{}/{}", config::GetInputFilePath(), stem);
 }
 
-std::vector<std::string> util::ParseToContainer(const std::string& filePath)
+std::vector<std::string> util::ParseToContainer(const std::string_view filePath)
 {
 
-    if(std::ifstream ifs{filePath}; ifs.is_open())
+    if(std::ifstream ifs{filePath.data()}; ifs.is_open())
     {
         std::vector<std::string> contents;
 
@@ -31,9 +31,9 @@ std::vector<std::string> util::ParseToContainer(const std::string& filePath)
     return {};
 }
 
-std::string util::Parse(const std::string& filePath)
+std::string util::Parse(const std::string_view filePath)
 {
-    if(std::ifstream ifs{filePath}; ifs.is_open())
+    if(std::ifstream ifs{filePath.data()}; ifs.is_open())
     {
         std::stringstream ss;
 
@@ -53,11 +53,11 @@ std::string util::Parse(const std::string& filePath)
     return {};
 }
 
-std::vector<std::string> util::Split(const std::string& x, const char delimiter)
+std::vector<std::string> util::Split(const std::string_view x, const char delimiter)
 {
     std::vector<std::string> tokens;
 
-    std::stringstream ss{x};
+    std::stringstream ss{x.data()};
     std::string s;
     while(std::getline(ss, s, delimiter))
     {

@@ -58,7 +58,7 @@ HttpsRequest::HttpsRequest()
     }
     else
     {
-        std::cerr << "Could not load session file\n";
+        std::println(std::cerr, "Could not load session file");
     }
 }
 
@@ -93,22 +93,12 @@ HttpsRequest& HttpsRequest::operator=(HttpsRequest&& other) noexcept
     return *this;
 }
 
-void HttpsRequest::setUrl(const std::string& url) const
+void HttpsRequest::setUrl(const std::string_view url) const
 {
-    setUrl(url.c_str());
+    curl_easy_setopt(mCurl, CURLOPT_URL, url.data());
 }
 
-void HttpsRequest::setUrl(const char* url) const
-{
-    curl_easy_setopt(mCurl, CURLOPT_URL, url);
-}
-
-void HttpsRequest::setContentType(const std::string& type) const
-{
-    setContentType(type.c_str());
-}
-
-void HttpsRequest::setContentType(const char* type) const
+void HttpsRequest::setContentType(const std::string_view type) const
 {
     curl_slist* list = nullptr;
     const auto content = std::format("Content-Type: {}", type);
@@ -124,10 +114,8 @@ std::optional<std::string> HttpsRequest::operator()() const
         {
             return mReadBuffer;
         }
-        else
-        {
-            std::println(std::cerr, "Could not perform HTTPS request");
-        }
+
+        std::println(std::cerr, "Could not perform HTTPS request");
     }
     else
     {
