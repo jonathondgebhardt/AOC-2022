@@ -5,6 +5,7 @@
 #include <optional>
 #include <print>
 #include <regex>
+#include <time.h>
 
 #include <cxxopts.hpp>
 
@@ -24,16 +25,27 @@ bool DayIsValid()
     return day >= 1 && day <= 31;
 }
 
-int GetCurrentYear()
+std::tm GetSystemTime()
 {
     // https://stackoverflow.com/a/58153628
     const std::time_t t = std::time(nullptr);
-    const std::tm* const pTInfo = std::localtime(&t);
+    std::tm pTInfo;
+    if(localtime_s(&pTInfo, &t) == 0)
+    {
+        throw std::runtime_error("failed to get system time");
+    }
 
-    auto currentYear = 1900 + pTInfo->tm_year;
+    return pTInfo;
+}
+
+int GetCurrentYear()
+{
+    const auto systemTime = GetSystemTime();
+
+    auto currentYear = 1900 + systemTime.tm_year;
 
     // AoC starts December 1st. If it's not December yet, use the previous year.
-    if(pTInfo->tm_mon < 11)
+    if(systemTime.tm_mon < 11)
     {
         --currentYear;
     }
@@ -48,10 +60,7 @@ std::string GetCurrentYearString()
 
 int GetCurrentDay()
 {
-    // https://stackoverflow.com/a/58153628
-    const std::time_t t = std::time(nullptr);
-    const std::tm* const pTInfo = std::localtime(&t);
-    return pTInfo->tm_mday;
+    return GetSystemTime().tm_mday;
 }
 
 std::string GetCurrentDayString()
