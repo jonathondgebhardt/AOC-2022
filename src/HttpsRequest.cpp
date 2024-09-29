@@ -19,11 +19,17 @@ namespace
     }
 
     // https://stackoverflow.com/questions/9786150/save-curl-content-result-into-a-string-in-c
+    // ReSharper disable CppParameterMayBeConst
+    // ReSharper disable IdentifierTypo
+    // ReSharper disable CppCStyleCast
     size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp)
     {
         ((std::string*)userp)->append((char*)contents, size * nmemb);
         return size * nmemb;
     }
+    // ReSharper restore CppCStyleCast
+    // ReSharper restore IdentifierTypo
+    // ReSharper restore CppParameterMayBeConst
 }
 
 HttpsRequest::HttpsRequest()
