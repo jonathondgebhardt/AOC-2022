@@ -96,7 +96,10 @@ HttpsRequest& HttpsRequest::operator=(HttpsRequest&& other) noexcept
 
 void HttpsRequest::setUrl(const std::string_view url) const
 {
-    curl_easy_setopt(mCurl, CURLOPT_URL, url.data());
+    if(curl_easy_setopt(mCurl, CURLOPT_URL, url.data()) == CURLE_OUT_OF_MEMORY)
+    {
+        throw std::runtime_error("curl: out of memory");
+    }
 }
 
 void HttpsRequest::setContentType(const std::string_view type) const
@@ -104,7 +107,11 @@ void HttpsRequest::setContentType(const std::string_view type) const
     curl_slist* list = nullptr;
     const auto content = std::format("Content-Type: {}", type);
     list = curl_slist_append(list, content.c_str());
-    curl_easy_setopt(mCurl, CURLOPT_HTTPHEADER, list);
+
+    if(curl_easy_setopt(mCurl, CURLOPT_HTTPHEADER, list) == CURLE_UNKNOWN_OPTION)
+    {
+        throw std::runtime_error("curl: unknown option");
+    }
 }
 
 std::optional<std::string> HttpsRequest::operator()() const
