@@ -76,6 +76,7 @@ if(MSVC)
 endif()
 
 # TODO: Put in a different directory?
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/CMakeLists.txt.in DESTINATION ${CMAKE_BINARY_DIR}/bin)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/Solution.cpp.in DESTINATION ${CMAKE_BINARY_DIR}/bin)
 
 enable_testing()
