@@ -211,9 +211,15 @@ bool CreateSourceFiles(const std::filesystem::path& x)
     return false;
 }
 
-// TODO: Make sure file doesn't already exist.
 bool DownloadInput()
 {
+    const auto fileName = std::format("{}/{}.txt", config::GetInputFilePath(), DAY);
+    if(std::filesystem::exists(fileName))
+    {
+        std::println("Input file already exists: '{}'", fileName);
+        return true;
+    }
+
     HttpsRequest request;
     request.setUrl(std::format("https://adventofcode.com/{}/day/{}/input", YEAR, DAY));
     request.setContentType("text/plain");
@@ -227,7 +233,6 @@ bool DownloadInput()
 
     if(const auto content = request())
     {
-        const auto fileName = config::GetInputFilePath() + "/" + DAY + ".txt";
         if(std::ofstream ofs{config::GetInputFilePath() + "/" + DAY + ".txt"}; ofs.is_open())
         {
             ofs << *content;
@@ -241,9 +246,15 @@ bool DownloadInput()
     return false;
 }
 
-// TODO: Make sure file doesn't already exist.
 bool DownloadSampleInput()
 {
+    const auto fileName = std::format("{}/{}_sample.txt", config::GetInputFilePath(), DAY);
+    if(std::filesystem::exists(fileName))
+    {
+        std::println("Input file already exists: '{}'", fileName);
+        return true;
+    }
+
     HttpsRequest request;
     request.setUrl(std::format("https://adventofcode.com/{}/day/{}", YEAR, DAY));
     request.setContentType("text/html");
@@ -268,7 +279,6 @@ bool DownloadSampleInput()
         const auto endTags = "</code></pre>";
         const auto size = content->find(endTags) - beginPos;
 
-        const auto fileName = config::GetInputFilePath() + "/" + DAY + "_sample.txt";
         if(std::ofstream ofs{fileName}; ofs.is_open())
         {
             ofs << content->substr(beginPos, size);
