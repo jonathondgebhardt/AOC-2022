@@ -9,6 +9,7 @@
 
 #include "HttpsRequest.hpp"
 #include "InputDirectoryConfig.hpp"
+#include "Utilities.ipp"
 
 std::string DAY;
 std::string YEAR;
@@ -17,16 +18,8 @@ std::vector<std::string> CREATED_FILES;
 
 bool DayIsValid()
 {
-    try
-    {
-        const auto day = std::stoi(DAY);
-        return day >= 1 && day <= 31;
-    }
-    catch(...)
-    {
-    }
-
-    return false;
+    const auto day = util::StringTo<int>(DAY);
+    return day >= 1 && day <= 31;
 }
 
 int GetCurrentYear()
@@ -66,16 +59,8 @@ std::string GetCurrentDayString()
 
 bool YearIsValid()
 {
-    try
-    {
-        const auto year = std::stoi(YEAR);
-        return year >= 2015 && year <= GetCurrentYear();
-    }
-    catch(...)
-    {
-    }
-
-    return false;
+    const auto year = util::StringTo<int>(YEAR);
+    return year >= 2015 && year <= GetCurrentYear();
 }
 
 bool TryCreateSolutionDirectory(const std::string& rootPath)
