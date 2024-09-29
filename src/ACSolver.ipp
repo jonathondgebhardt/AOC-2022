@@ -22,7 +22,7 @@ struct ACSolver
     ///
     virtual Answer solvePartOne()
     {
-        std::cerr << "Implement part one\n";
+        std::println(std::cerr, "Implement part one");
         return {};
     }
 
@@ -32,12 +32,12 @@ struct ACSolver
     ///
     virtual Answer solvePartTwo()
     {
-        std::cerr << "Implement part two\n";
+        std::println(std::cerr, "Implement part one");
         return {};
     }
 
     /// \var input
-    /// \brief Where all of the challenge input will be stored.
+    /// \brief Where all the challenge input will be stored.
     // TODO: Make a type to describe input?
     std::vector<std::string> mInput;
 };

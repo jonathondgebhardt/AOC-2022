@@ -1,8 +1,8 @@
-#include "Utilities.ipp"
-
-#include "InputDirectoryConfig.hpp"
 #include <fstream>
 #include <iostream>
+
+#include "InputDirectoryConfig.hpp"
+#include "Utilities.ipp"
 
 std::string util::GetInputFile(const std::string& x)
 {
@@ -13,8 +13,7 @@ std::vector<std::string> util::Parse(const std::string& x)
 {
     std::vector<std::string> contents;
 
-    std::ifstream ifs(x);
-    if(ifs.is_open())
+    if(std::ifstream ifs{x}; ifs.is_open())
     {
         for(std::string line; std::getline(ifs, line);)
         {
@@ -26,13 +25,13 @@ std::vector<std::string> util::Parse(const std::string& x)
     }
     else
     {
-        std::cerr << "Could not open '" << x << "'\n";
+        std::println(std::cerr, "Could not open '{}'", x);
     }
 
     return contents;
 }
 
-std::vector<std::string> util::Split(const std::string& x, char delimiter)
+std::vector<std::string> util::Split(const std::string& x, const char delimiter)
 {
     std::vector<std::string> tokens;
 

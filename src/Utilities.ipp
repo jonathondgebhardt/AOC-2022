@@ -1,9 +1,9 @@
 #pragma once
 
-#include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 namespace util
 {
@@ -24,10 +24,8 @@ namespace util
     std::vector<T> ContainerTo(const std::vector<std::string>& x)
     {
         std::vector<T> converted;
-        for(const auto& item : x)
-        {
-            converted.push_back(StringTo<T>(item));
-        }
+        std::ranges::transform(x, std::back_inserter(converted),
+                               [](const auto& y) { return StringTo<T>(y); });
 
         return converted;
     }

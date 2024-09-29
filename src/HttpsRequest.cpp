@@ -1,6 +1,4 @@
-//
-// Created by jon on 10/29/23.
-//
+#include <iostream>
 
 #include "HttpsRequest.hpp"
 #include "InputDirectoryConfig.hpp"
@@ -10,10 +8,11 @@ namespace
 {
     std::optional<std::string> GetCookie()
     {
-        const auto sessionFile = config::GetInputFilePath() + "/.adventofcode.session";
+        const auto sessionFile =
+            std::format("{}/.adventofcode.session", config::GetInputFilePath());
         if(const auto sessions = util::Parse(sessionFile); !sessions.empty())
         {
-            return "session=" + sessions.front();
+            return std::format("session={}", sessions.front());
         }
 
         return {};
@@ -49,12 +48,18 @@ HttpsRequest::HttpsRequest()
 
     if(const auto cookie = GetCookie())
     {
-        curl_easy_setopt(mCurl, CURLOPT_COOKIE, (*cookie).c_str());
+        curl_easy_setopt(mCurl, CURLOPT_COOKIE, cookie->c_str());
     }
     else
     {
         std::cerr << "Could not load session file\n";
     }
+}
+
+HttpsRequest::HttpsRequest(HttpsRequest&& other) noexcept
+{
+    mCurl = std::exchange(other.mCurl, nullptr);
+    mReadBuffer = std::exchange(other.mReadBuffer, {});
 }
 
 HttpsRequest::~HttpsRequest()
@@ -64,28 +69,43 @@ HttpsRequest::~HttpsRequest()
         curl_easy_cleanup(mCurl);
     }
 
+    // TODO: CURL says this should be called once per application.
     curl_global_cleanup();
 }
 
-void HttpsRequest::setUrl(const std::string& url)
+HttpsRequest& HttpsRequest::operator=(HttpsRequest&& other) noexcept
+{
+    if(mCurl)
+    {
+        curl_easy_cleanup(mCurl);
+    }
+
+    // TODO: Don't repeat yourself.
+    mCurl = std::exchange(other.mCurl, nullptr);
+    mReadBuffer = std::exchange(other.mReadBuffer, {});
+
+    return *this;
+}
+
+void HttpsRequest::setUrl(const std::string& url) const
 {
     setUrl(url.c_str());
 }
 
-void HttpsRequest::setUrl(const char* url)
+void HttpsRequest::setUrl(const char* url) const
 {
     curl_easy_setopt(mCurl, CURLOPT_URL, url);
 }
 
-void HttpsRequest::setContentType(const std::string& type)
+void HttpsRequest::setContentType(const std::string& type) const
 {
     setContentType(type.c_str());
 }
 
-void HttpsRequest::setContentType(const char* type)
+void HttpsRequest::setContentType(const char* type) const
 {
     curl_slist* list = nullptr;
-    const std::string content = std::string("Content-Type: ") + type;
+    const auto content = std::format("Content-Type: {}", type);
     list = curl_slist_append(list, content.c_str());
     curl_easy_setopt(mCurl, CURLOPT_HTTPHEADER, list);
 }
@@ -100,12 +120,12 @@ std::optional<std::string> HttpsRequest::operator()() const
         }
         else
         {
-            std::cerr << "Could not perform HTTPS request\n";
+            std::println(std::cerr, "Could not perform HTTPS request");
         }
     }
     else
     {
-        std::cerr << "Could initialize CURL environment\n";
+        std::println(std::cerr, "Could not initialize CURL environment");
     }
 
     return {};
