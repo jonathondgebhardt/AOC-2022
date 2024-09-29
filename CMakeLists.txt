@@ -32,18 +32,16 @@ include_directories(src)
 # Generate a file that allows source code to use paths in the project like "inputs".
 get_filename_component(INPUT_FILE_PATH "inputs" REALPATH BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(SOLUTIONS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/solutions")
-configure_file(src/InputDirectoryConfig.cpp.in ${CMAKE_BINARY_DIR}/generated/InputDirectoryConfig.cpp)
-include_directories(${CMAKE_BINARY_DIR}/generated/)
+configure_file(src/InputDirectoryConfig.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/src/InputDirectoryConfig.hpp)
 
 set(AOC_SOURCE_H
     src/ACSolver.ipp
-    src/Utilities.ipp
     src/InputDirectoryConfig.hpp
+    src/Utilities.ipp
 )
 
 set(AOC_SOURCE
     src/Utilities.cpp
-    ${CMAKE_BINARY_DIR}/generated/InputDirectoryConfig.cpp
 )
 
 add_library(AOC STATIC
@@ -54,7 +52,11 @@ add_library(AOC STATIC
 find_package(CURL CONFIG REQUIRED)
 find_package(cxxopts CONFIG REQUIRED)
 add_executable(StartNewDay src/StartNewDay.cpp src/HttpsRequest.cpp src/HttpsRequest.hpp)
-target_link_libraries(StartNewDay PRIVATE CURL::libcurl cxxopts::cxxopts AOC)
+target_link_libraries(StartNewDay PRIVATE 
+    CURL::libcurl 
+    cxxopts::cxxopts 
+    AOC
+)
 
 if(MSVC)
     set(WINDOWS_VCPKG_BIN_RELEASE ${VCPKG_INSTALLED_DIR}/x64-windows/bin)
