@@ -107,7 +107,11 @@ bool CreateCMakeLists(const std::filesystem::path& x)
         return true;
     }
 
+#ifdef WIN32
     if(const auto contents = util::Parse("../CMakeLists.txt.in"); !contents.empty())
+#else
+    if(const auto contents = util::Parse("CMakeLists.txt.in"); !contents.empty())
+#endif
     {
         if(std::ofstream ofs{cmakeLists}; ofs.is_open())
         {
@@ -133,7 +137,11 @@ bool CreateSourceFiles(const std::filesystem::path& x)
         return true;
     }
 
+#ifdef WIN32
     if(const auto contents = util::Parse("../Solution.cpp.in"); !contents.empty())
+#else
+    if(const auto contents = util::Parse("Solution.cpp.in"); !contents.empty())
+#endif
     {
         if(std::ofstream ofs{fullPath}; ofs.is_open())
         {
