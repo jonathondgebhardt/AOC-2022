@@ -10,7 +10,7 @@ namespace
     {
         const auto sessionFile =
             std::format("{}/.adventofcode.session", config::GetInputFilePath());
-        if(const auto sessions = util::Parse(sessionFile); !sessions.empty())
+        if(const auto sessions = util::ParseToContainer(sessionFile); !sessions.empty())
         {
             return std::format("session={}", sessions.front());
         }

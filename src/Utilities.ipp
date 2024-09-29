@@ -1,15 +1,17 @@
 #pragma once
 
+#include <algorithm>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <algorithm>
 
 namespace util
 {
-    std::string GetInputFile(const std::string& x);
+    std::string GetInputFile(const std::string& stem);
 
-    std::vector<std::string> Parse(const std::string& x);
+    std::vector<std::string> ParseToContainer(const std::string& filePath);
+
+    std::string Parse(const std::string& filePath);
 
     template <class T> T StringTo(const std::string& x)
     {
@@ -20,8 +22,7 @@ namespace util
         return result;
     }
 
-    template <class T>
-    std::vector<T> ContainerTo(const std::vector<std::string>& x)
+    template <class T> std::vector<T> ContainerTo(const std::vector<std::string>& x)
     {
         std::vector<T> converted;
         std::ranges::transform(x, std::back_inserter(converted),
