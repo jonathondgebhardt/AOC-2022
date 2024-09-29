@@ -14,7 +14,11 @@ struct ACSolver
     using Answer = std::optional<int64_t>;
 
     ACSolver() = default;
+    ACSolver(const ACSolver&) = default;
+    ACSolver(ACSolver&&) noexcept = default;
     virtual ~ACSolver() noexcept = default;
+    ACSolver& operator=(const ACSolver&) = default;
+    ACSolver& operator=(ACSolver&&) noexcept = default;
 
     ///
     /// \brief Solution for part one.

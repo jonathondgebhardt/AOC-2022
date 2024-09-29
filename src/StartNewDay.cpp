@@ -84,11 +84,10 @@ bool CreateCMakeLists(const std::filesystem::path& x)
 cmake_minimum_required(VERSION 3.0...3.5)
 project(day{} CXX)
 
-
-add_executable(${{PROJECT_NAME}} {}.cpp
+add_executable(${{PROJECT_NAME}} {}.cpp)
 target_link_libraries(${{PROJECT_NAME}} GTest::gtest_main AOC)
 include(GoogleTest)
-gtest_discover_tests(${{PROJECT_NAME}}
+gtest_discover_tests(${{PROJECT_NAME}})
 )",
                            DAY, DAY);
 
@@ -114,7 +113,7 @@ endif()
 bool CreateSourceFiles(const std::filesystem::path& x)
 {
     const auto solutionFile = DAY + ".cpp";
-    const auto fullPath = x / solutionFile;
+    const auto fullPath = x / std::format("{}.cpp", DAY);
 
     if(std::ofstream ofs{fullPath}; ofs.is_open())
     {
