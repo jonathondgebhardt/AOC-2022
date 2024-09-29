@@ -2,6 +2,7 @@
 #include <format>
 #include <fstream>
 #include <iostream>
+#include <iterator>
 #include <optional>
 #include <print>
 #include <regex>
@@ -30,7 +31,11 @@ std::tm GetSystemTime()
     // https://stackoverflow.com/a/58153628
     const std::time_t t = std::time(nullptr);
     std::tm pTInfo;
+#ifdef WIN32
     if(localtime_s(&pTInfo, &t) == 0)
+#else
+    if(localtime_r(&t, &pTInfo) == 0)
+#endif
     {
         throw std::runtime_error("failed to get system time");
     }
@@ -118,7 +123,6 @@ bool CreateCMakeLists(const std::filesystem::path& x)
     return false;
 }
 
-// TODO: Use an in-file for this?
 bool CreateSourceFiles(const std::filesystem::path& x)
 {
     const auto fullPath = x / std::format("{}.cpp", DAY);
