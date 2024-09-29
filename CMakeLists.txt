@@ -35,7 +35,6 @@ set(SOLUTIONS_PATH "${CMAKE_CURRENT_SOURCE_DIR}/solutions")
 configure_file(src/InputDirectoryConfig.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/src/InputDirectoryConfig.hpp)
 
 set(AOC_SOURCE_H
-    src/ACSolver.ipp
     src/InputDirectoryConfig.hpp
     src/Utilities.ipp
 )
